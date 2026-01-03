@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Netflix - Watch TV Shows Online, Watch Movies Online</title>
+    <title>MyFlix Demo - Netflix-style UI (Demo Project)</title>
     <style>
         * {
             margin: 0;
@@ -16,6 +16,25 @@
             background: #000;
             color: #fff;
             overflow-x: hidden;
+        }
+
+        .demo-banner {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 10px 20px;
+            background: #ffeb3b;
+            color: #000;
+            text-align: center;
+            font-size: 0.9rem;
+            font-weight: 600;
+            z-index: 1100;
+        }
+
+        .demo-banner a {
+            color: inherit;
+            text-decoration: underline;
         }
 
         /* Navigation */
@@ -437,10 +456,13 @@
         }
     </style>
 </head>
-<body>
+    <body>
+    <div class="demo-banner">
+        This is a <strong>demo clone project</strong> for learning purposes only. It is <strong>not</strong> an official Netflix website. Do not enter any real Netflix passwords or sensitive information.
+    </div>
     <!-- Navigation -->
     <nav class="navbar" id="navbar">
-        <a href="#" class="logo">NETFLIX</a>
+        <a href="#" class="logo">MYFLIX DEMO</a>
         <a href="pages/netflix.html" class="signin-btn">Sign In</a>
     </nav>
 
@@ -516,34 +538,34 @@
             <ul class="faq-list">
                 <li class="faq-item">
                     <button class="faq-question">
-                        <span>What is Netflix?</span>
+                        <span>What is MyFlix Demo?</span>
                         <span class="faq-icon">+</span>
                     </button>
                     <div class="faq-answer">
                         <div class="faq-answer-content">
-                            Netflix is a streaming service that offers a wide variety of award-winning TV shows, movies, anime, documentaries, and more on thousands of internet-connected devices.
+                            MyFlix Demo is a fictional streaming UI built for learning and portfolio purposes. It mimics the look of a streaming service but does not provide real movies, subscriptions, or accounts.
                         </div>
                     </div>
                 </li>
                 <li class="faq-item">
                     <button class="faq-question">
-                        <span>How much does Netflix cost?</span>
+                        <span>Does MyFlix Demo cost anything?</span>
                         <span class="faq-icon">+</span>
                     </button>
                     <div class="faq-answer">
                         <div class="faq-answer-content">
-                            Watch Netflix on your smartphone, tablet, Smart TV, laptop, or streaming device, all for one fixed monthly fee. Plans range from $9.99 to $19.99 a month. No extra costs, no contracts.
+                            MyFlix Demo is completely free and exists only in your browser. It is a front-end practice project and does not charge money or connect to any real payment systems.
                         </div>
                     </div>
                 </li>
                 <li class="faq-item">
                     <button class="faq-question">
-                        <span>Where can I watch?</span>
+                        <span>Where can I use MyFlix Demo?</span>
                         <span class="faq-icon">+</span>
                     </button>
                     <div class="faq-answer">
                         <div class="faq-answer-content">
-                            Watch anywhere, anytime. Sign in with your Netflix account to watch instantly on the web at netflix.com from your personal computer or on any internet-connected device that offers the Netflix app.
+                            You can open this demo in any modern desktop or mobile browser. It runs completely on the client side and is not connected to netflix.com or any official Netflix systems.
                         </div>
                     </div>
                 </li>
@@ -560,23 +582,23 @@
                 </li>
                 <li class="faq-item">
                     <button class="faq-question">
-                        <span>What can I watch on Netflix?</span>
+                        <span>What can I do with MyFlix Demo?</span>
                         <span class="faq-icon">+</span>
                     </button>
                     <div class="faq-answer">
                         <div class="faq-answer-content">
-                            Netflix has an extensive library of feature films, documentaries, TV shows, anime, award-winning Netflix originals, and more. Watch as much as you want, anytime you want.
+                            MyFlix Demo lets you explore a Netflix-style interface, practice front-end development, and experiment with UI ideas. It does not stream real licensed content.
                         </div>
                     </div>
                 </li>
                 <li class="faq-item">
                     <button class="faq-question">
-                        <span>Is Netflix good for kids?</span>
+                        <span>Is MyFlix Demo safe for kids?</span>
                         <span class="faq-icon">+</span>
                     </button>
                     <div class="faq-answer">
                         <div class="faq-answer-content">
-                            The Netflix Kids experience is included in your membership to give parents control while kids enjoy family-friendly TV shows and movies in their own space.
+                            MyFlix Demo does not stream real content and stores data only in your local browser. It is meant as a coding exercise, so always supervise children when browsing the wider web.
                         </div>
                     </div>
                 </li>
@@ -616,10 +638,10 @@
                 <a href="#">Contact Us</a>
                 <a href="#">Speed Test</a>
                 <a href="#">Legal Notices</a>
-                <a href="#">Only on Netflix</a>
+                <a href="#">Only on MyFlix Demo (not affiliated with Netflix)</a>
             </div>
             <div class="footer-bottom">
-                <p>Netflix</p>
+                <p>MyFlix Demo &mdash; Unofficial Netflix-style clone</p>
             </div>
         </div>
     </footer>

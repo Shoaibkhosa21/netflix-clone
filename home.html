@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Netflix</title>
+    <title>MyFlix Demo - Home (Demo Project)</title>
     <style>
         * {
             margin: 0;
@@ -16,6 +16,25 @@
             background: #000;
             color: #fff;
             overflow-x: hidden;
+        }
+
+        .demo-banner {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 10px 20px;
+            background: #ffeb3b;
+            color: #000;
+            text-align: center;
+            font-size: 0.9rem;
+            font-weight: 600;
+            z-index: 1100;
+        }
+
+        .demo-banner a {
+            color: inherit;
+            text-decoration: underline;
         }
 
         /* Navigation */
@@ -552,9 +571,12 @@
     </style>
 </head>
 <body>
+    <div class="demo-banner">
+        This is a <strong>demo clone project</strong> for learning purposes only. It is <strong>not</strong> an official Netflix website. Do not enter any real Netflix passwords or sensitive information.
+    </div>
     <!-- Navigation -->
     <nav class="navbar" id="navbar">
-        <a href="index.html" class="logo">NETFLIX</a>
+        <a href="index.html" class="logo">MYFLIX DEMO</a>
         <div class="nav-right">
             <div class="search-icon">🔍</div>
             <div class="notifications-icon">🔔</div>
@@ -622,7 +644,7 @@
     </div>
 
     <div class="content-section">
-        <h2 class="section-title">Popular on Netflix</h2>
+        <h2 class="section-title">Popular on MyFlix Demo</h2>
         <div class="row" id="popularRow"></div>
     </div>
 
@@ -657,10 +679,10 @@
                 <a href="#">Contact Us</a>
                 <a href="#">Speed Test</a>
                 <a href="#">Legal Notices</a>
-                <a href="#">Only on Netflix</a>
+                <a href="#">Only on MyFlix Demo (not affiliated with Netflix)</a>
             </div>
             <div class="footer-bottom">
-                <p>Netflix</p>
+                <p>MyFlix Demo &mdash; Unofficial Netflix-style clone</p>
             </div>
         </div>
     </footer>

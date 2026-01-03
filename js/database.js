@@ -3,7 +3,7 @@
 
 class UserDatabase {
     constructor() {
-        this.storageKey = 'netflix_users';
+        this.storageKey = 'myflix_demo_users';
         this.initDatabase();
     }
 
@@ -12,7 +12,7 @@ class UserDatabase {
         if (!localStorage.getItem(this.storageKey)) {
             const defaultUsers = [
                 {
-                    email: 'admin@netflix.com',
+                    email: 'admin@myflixdemo.local',
                     password: 'admin123',
                     name: 'Admin User',
                     createdAt: new Date().toISOString()
@@ -91,12 +91,12 @@ class UserDatabase {
 
     // Set current logged in user
     setCurrentUser(user) {
-        localStorage.setItem('netflix_current_user', JSON.stringify(user));
+        localStorage.setItem('myflix_demo_current_user', JSON.stringify(user));
     }
 
     // Get current logged in user
     getCurrentUser() {
-        const user = localStorage.getItem('netflix_current_user');
+        const user = localStorage.getItem('myflix_demo_current_user');
         return user ? JSON.parse(user) : null;
     }
 

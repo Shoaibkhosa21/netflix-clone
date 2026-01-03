@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Netflix - Sign Up</title>
+    <title>MyFlix Demo - Sign Up (Demo Project)</title>
     <style>
         * {
             margin: 0;
@@ -22,6 +22,25 @@
             justify-content: center;
             align-items: center;
             color: #fff;
+        }
+
+        .demo-banner {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 10px 20px;
+            background: #ffeb3b;
+            color: #000;
+            text-align: center;
+            font-size: 0.9rem;
+            font-weight: 600;
+            z-index: 1100;
+        }
+
+        .demo-banner a {
+            color: inherit;
+            text-decoration: underline;
         }
 
         .container {
@@ -178,10 +197,13 @@
     </style>
 </head>
 <body>
+    <div class="demo-banner">
+        This is a <strong>demo clone project</strong> for learning purposes only. It is <strong>not</strong> an official Netflix signup page. Do not enter any real Netflix passwords or sensitive information.
+    </div>
     <div class="container">
         <div class="logo">
             <a href="index.html" style="color: #e50914; text-decoration: none;">
-                <h1>NETFLIX</h1>
+                <h1>MYFLIX DEMO</h1>
             </a>
         </div>
         
@@ -229,12 +251,11 @@
         </form>
         
         <div class="signin-section">
-            Already have an account? <a href="pages/netflix.html">Sign in</a>.
+            Already have a demo account? <a href="pages/netflix.html">Sign in</a>.
         </div>
         
         <div class="footer">
-            <p>This page is protected by Google reCAPTCHA to ensure you're not a bot. 
-            <a href="#">Learn more</a>.</p>
+            <p>This is a front-end demo only and is not affiliated with Netflix or Google. Do not use real credentials.</p>
         </div>
     </div>
 
