@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Netflix - Sign In</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.8)), 
+                        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080"><rect fill="%23000" width="1920" height="1080"/></svg>');
+            background-size: cover;
+            background-position: center;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 450px;
+            padding: 60px 68px 40px;
+            background: rgba(0, 0, 0, 0.75);
+            border-radius: 4px;
+        }
+
+        .logo {
+            margin-bottom: 30px;
+        }
+
+        .logo h1 {
+            color: #e50914;
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: -1px;
+        }
+
+        h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 28px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 16px 20px;
+            background: #333;
+            border: none;
+            border-radius: 4px;
+            color: #fff;
+            font-size: 16px;
+            outline: none;
+            transition: background 0.2s;
+        }
+
+        input[type="email"]:focus,
+        input[type="password"]:focus {
+            background: #454545;
+        }
+
+        input[type="email"]::placeholder,
+        input[type="password"]::placeholder {
+            color: #8c8c8c;
+        }
+
+        .btn-signin {
+            width: 100%;
+            padding: 16px;
+            background: #e50914;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 24px;
+            transition: background 0.2s;
+        }
+
+        .btn-signin:hover {
+            background: #f40612;
+        }
+
+        .btn-signin:active {
+            background: #b20710;
+        }
+
+        .help-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 12px;
+            font-size: 13px;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .remember-me input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+        }
+
+        .help-link {
+            color: #b3b3b3;
+            text-decoration: none;
+        }
+
+        .help-link:hover {
+            text-decoration: underline;
+        }
+
+        .signup-section {
+            margin-top: 16px;
+            font-size: 16px;
+            color: #737373;
+        }
+
+        .signup-section a {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .signup-section a:hover {
+            text-decoration: underline;
+        }
+
+        .footer {
+            margin-top: 60px;
+            padding-top: 20px;
+            border-top: 1px solid #333;
+            font-size: 13px;
+            color: #8c8c8c;
+        }
+
+        .footer a {
+            color: #8c8c8c;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .error-message {
+            background: #e87c03;
+            color: #fff;
+            padding: 12px;
+            border-radius: 4px;
+            margin-bottom: 16px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 40px 30px;
+                max-width: 100%;
+            }
+
+            .logo h1 {
+                font-size: 2rem;
+            }
+
+            h2 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <a href="../index.html" style="color: #e50914; text-decoration: none;">
+                <h1>NETFLIX</h1>
+            </a>
+        </div>
+        
+        <h2>Sign In</h2>
+        
+        <div class="error-message" id="errorMessage"></div>
+        
+        <form id="loginForm">
+            <div class="form-group">
+                <input 
+                    type="email" 
+                    id="email" 
+                    name="email" 
+                    placeholder="Email or phone number" 
+                    required
+                    autocomplete="email"
+                >
+            </div>
+            
+            <div class="form-group">
+                <input 
+                    type="password" 
+                    id="password" 
+                    name="password" 
+                    placeholder="Password" 
+                    required
+                    autocomplete="current-password"
+                >
+            </div>
+            
+            <button type="submit" class="btn-signin">Sign In</button>
+            
+            <div class="help-section">
+                <div class="remember-me">
+                    <input type="checkbox" id="remember" name="remember">
+                    <label for="remember">Remember me</label>
+                </div>
+                <a href="#" class="help-link">Need help?</a>
+            </div>
+        </form>
+        
+        <div class="signup-section">
+            New to Netflix? <a href="../signup.html">Sign up now</a>.
+        </div>
+        
+        <div class="footer">
+            <p>This page is protected by Google reCAPTCHA to ensure you're not a bot. 
+            <a href="#">Learn more</a>.</p>
+        </div>
+    </div>
+
+    <script src="../js/database.js"></script>
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const errorMsg = document.getElementById('errorMessage');
+            
+            // Hide previous error message
+            errorMsg.classList.remove('show');
+            
+            // Verify login credentials
+            const result = userDB.verifyLogin(email, password);
+            
+            if (result.success) {
+                // Save current user session
+                userDB.setCurrentUser(result.user);
+                
+                // Redirect to homepage after successful login
+                window.location.href = '../home.html';
+            } else {
+                // Show error message
+                errorMsg.textContent = result.message;
+                errorMsg.classList.add('show');
+            }
+        });
+    </script>
+</body>
+</html>
+
