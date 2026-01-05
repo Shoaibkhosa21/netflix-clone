@@ -666,119 +666,130 @@
         </div>
     </footer>
 
-    <script src="js/database.js"></script>
     <script>
-        // Movie data with YouTube video IDs (using actual working trailer video IDs)
-        const movies = {
-            // Using your 9 custom YouTube video IDs (no repeats within each row)
-            trending: [
-                { id: 'OwQqisXFjHk', title: 'Custom Video 1', year: '2024', rating: 'PG', description: 'Custom video 1 from your playlist.', genre: 'Custom' },
-                { id: 'NLQqHYWi2OQ', title: 'Custom Video 2', year: '2024', rating: 'PG', description: 'Custom video 2 from your playlist.', genre: 'Custom' },
-                { id: 'uNFGn3BUygg', title: 'Custom Video 3', year: '2024', rating: 'PG', description: 'Custom video 3 from your playlist.', genre: 'Custom' }
-            ],
-            popular: [
-                { id: '1DYOCDVUMHw', title: 'Custom Video 4', year: '2024', rating: 'PG', description: 'Custom video 4 from your playlist.', genre: 'Custom' },
-                { id: '9dX4h77PQV8', title: 'Custom Video 5', year: '2024', rating: 'PG', description: 'Custom video 5 from your playlist.', genre: 'Custom' },
-                { id: 'kQHNrcSOb80', title: 'Custom Video 6', year: '2024', rating: 'PG', description: 'Custom video 6 from your playlist.', genre: 'Custom' }
-            ],
-            continue: [
-                { id: 'z-Jq-Cgg1jk', title: 'Custom Video 7', year: '2024', rating: 'PG', description: 'Custom video 7 from your playlist.', genre: 'Custom' },
-                { id: 'agO-eRZ-1bE', title: 'Custom Video 8', year: '2024', rating: 'PG', description: 'Custom video 8 from your playlist.', genre: 'Custom' },
-                { id: '45uyMBOXZHc', title: 'Custom Video 9', year: '2024', rating: 'PG', description: 'Custom video 9 from your playlist.', genre: 'Custom' }
-            ],
-            topRated: [
-                { id: 'OwQqisXFjHk', title: 'Custom Video 1', year: '2024', rating: 'PG', description: 'Custom video 1 from your playlist.', genre: 'Custom' },
-                { id: '1DYOCDVUMHw', title: 'Custom Video 4', year: '2024', rating: 'PG', description: 'Custom video 4 from your playlist.', genre: 'Custom' },
-                { id: '9dX4h77PQV8', title: 'Custom Video 5', year: '2024', rating: 'PG', description: 'Custom video 5 from your playlist.', genre: 'Custom' },
-                { id: 'agO-eRZ-1bE', title: 'Custom Video 8', year: '2024', rating: 'PG', description: 'Custom video 8 from your playlist.', genre: 'Custom' }
-            ]
-        };
+        const API_BASE = 'http://localhost:5000/api';
 
-        // Create movie cards
-        function createMovieCard(movie, container) {
+        function getAuthToken() {
+            return localStorage.getItem('myflix_token');
+        }
+
+        function getStoredUser() {
+            try {
+                const raw = localStorage.getItem('myflix_user');
+                return raw ? JSON.parse(raw) : null;
+            } catch (e) {
+                return null;
+            }
+        }
+
+        // Create a card from backend video data
+        function createVideoCard(video, container) {
             const card = document.createElement('div');
             card.className = 'movie-card';
-            card.onclick = () => showDetails(movie);
-            
+            card.onclick = () => showDetails(video);
+
             const thumbnail = document.createElement('img');
             thumbnail.className = 'video-thumbnail';
-            thumbnail.src = `https://img.youtube.com/vi/${movie.id}/maxresdefault.jpg`;
-            thumbnail.alt = movie.title;
-            thumbnail.onerror = function() {
-                this.src = `https://img.youtube.com/vi/${movie.id}/hqdefault.jpg`;
-            };
-            
-            const preview = document.createElement('iframe');
-            preview.className = 'video-preview';
-            preview.src = `https://www.youtube.com/embed/${movie.id}?autoplay=0&mute=0&controls=1&showinfo=0&rel=0&modestbranding=1`;
-            preview.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
-            preview.frameBorder = '0';
-            preview.width = '100%';
-            preview.height = '100%';
-            preview.onerror = function() {
-                this.style.display = 'none';
-            };
-            
+
+            if (video.externalUrl && video.externalUrl.includes('youtube')) {
+                // Try to derive YouTube thumbnail from URL
+                const idMatch = video.externalUrl.match(/[?&]v=([^&#]+)/) || video.externalUrl.match(/youtu.be\/(.+)$/);
+                const ytId = idMatch ? idMatch[1] : null;
+                if (ytId) {
+                    thumbnail.src = `https://img.youtube.com/vi/${ytId}/hqdefault.jpg`;
+                } else {
+                    thumbnail.src = 'https://via.placeholder.com/400x300?text=Video';
+                }
+            } else {
+                // Uploaded video or non-YouTube link: use placeholder
+                thumbnail.src = 'https://via.placeholder.com/400x300?text=Video';
+            }
+
+            thumbnail.alt = video.title;
+
             const playOverlay = document.createElement('div');
             playOverlay.className = 'play-overlay';
             playOverlay.innerHTML = '▶';
-            
+
             card.appendChild(thumbnail);
-            card.appendChild(preview);
             card.appendChild(playOverlay);
             container.appendChild(card);
         }
 
-        // Show movie details modal
-        function showDetails(movie) {
+        // Show details modal for a backend video
+        function showDetails(video) {
             const modal = document.getElementById('detailsModal');
             const header = document.getElementById('detailsHeader');
             const title = document.getElementById('detailsTitle');
             const meta = document.getElementById('detailsMeta');
             const description = document.getElementById('detailsDescription');
             const playBtn = document.getElementById('detailsPlayBtn');
-            
-            header.style.backgroundImage = `url(https://img.youtube.com/vi/${movie.id}/maxresdefault.jpg)`;
-            title.textContent = movie.title;
-            
+
+            // Background image: reuse YouTube thumbnail when possible, otherwise solid color
+            if (video.externalUrl && video.externalUrl.includes('youtube')) {
+                const idMatch = video.externalUrl.match(/[?&]v=([^&#]+)/) || video.externalUrl.match(/youtu.be\/(.+)$/);
+                const ytId = idMatch ? idMatch[1] : null;
+                if (ytId) {
+                    header.style.backgroundImage = `url(https://img.youtube.com/vi/${ytId}/maxresdefault.jpg)`;
+                } else {
+                    header.style.backgroundImage = 'linear-gradient(135deg, #144272, #2C74B3)';
+                }
+            } else {
+                header.style.backgroundImage = 'linear-gradient(135deg, #144272, #2C74B3)';
+            }
+
+            title.textContent = video.title;
+
             meta.innerHTML = `
-                <span class="meta-item year">${movie.year}</span>
-                <span class="meta-item rating">${movie.rating}</span>
-                <span class="meta-item">${movie.genre}</span>
+                <span class="meta-item">${video.views || 0} views</span>
             `;
-            
-            description.textContent = movie.description;
+
+            description.textContent = video.description || '';
+
             playBtn.onclick = () => {
                 closeDetails();
                 setTimeout(() => {
-                    playVideo(movie.id);
+                    playVideo(video);
                 }, 300);
             };
-            
+
             modal.classList.add('active');
             document.body.style.overflow = 'hidden';
         }
 
-        // Close details modal
         function closeDetails() {
             const modal = document.getElementById('detailsModal');
             modal.classList.remove('active');
             document.body.style.overflow = 'auto';
         }
 
-        // Play video: we always pass a plain YouTube video ID (not a full URL)
-        function playVideo(videoId) {
+        // Play either uploaded or external video
+        function playVideo(video) {
             const modal = document.getElementById('videoModal');
             const player = document.getElementById('videoPlayer');
 
-            const embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1`;
+            let src;
+            if (video.filePath) {
+                // Stream from backend
+                src = `http://localhost:5000/api/videos/${video._id}/stream`;
+            } else if (video.externalUrl) {
+                src = video.externalUrl;
+            }
 
-            player.src = embedUrl;
+            if (!src) {
+                return;
+            }
+
+            player.src = src;
             modal.classList.add('active');
             document.body.style.overflow = 'hidden';
+
+            // Increment view count for external URLs
+            if (!video.filePath) {
+                fetch(`${API_BASE}/videos/${video._id}/view`, { method: 'POST' }).catch(() => {});
+            }
         }
 
-        // Close video
         function closeVideo() {
             const modal = document.getElementById('videoModal');
             const player = document.getElementById('videoPlayer');
@@ -787,32 +798,71 @@
             document.body.style.overflow = 'auto';
         }
 
-        // Initialize page
-        window.addEventListener('DOMContentLoaded', function() {
-            if (!userDB.isLoggedIn()) {
+        async function ensureAuthenticated() {
+            const token = getAuthToken();
+            if (!token) {
                 window.location.href = 'pages/netflix.html';
-                return;
-            }
-            
-            const currentUser = userDB.getCurrentUser();
-            if (currentUser) {
-                const profileAvatar = document.querySelector('.profile-avatar');
-                if (profileAvatar && currentUser.name) {
-                    profileAvatar.textContent = currentUser.name.charAt(0).toUpperCase();
-                }
+                return null;
             }
 
-            // Populate movie rows
-            movies.trending.forEach(movie => createMovieCard(movie, document.getElementById('trendingRow')));
-            movies.popular.forEach(movie => createMovieCard(movie, document.getElementById('popularRow')));
-            movies.continue.forEach(movie => createMovieCard(movie, document.getElementById('continueRow')));
-            movies.topRated.forEach(movie => createMovieCard(movie, document.getElementById('topRatedRow')));
+            try {
+                const res = await fetch(`${API_BASE}/auth/me`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                if (!res.ok) {
+                    throw new Error('Not authenticated');
+                }
+                const data = await res.json();
+                const user = data.user;
+                localStorage.setItem('myflix_user', JSON.stringify(user));
+                return user;
+            } catch (e) {
+                localStorage.removeItem('myflix_token');
+                localStorage.removeItem('myflix_user');
+                window.location.href = 'pages/netflix.html';
+                return null;
+            }
+        }
+
+        async function loadVideos() {
+            try {
+                const res = await fetch(`${API_BASE}/videos`);
+                const data = await res.json();
+                const videos = data.videos || [];
+
+                const trendingRow = document.getElementById('trendingRow');
+                const popularRow = document.getElementById('popularRow');
+                const continueRow = document.getElementById('continueRow');
+                const topRatedRow = document.getElementById('topRatedRow');
+
+                videos.forEach(video => {
+                    createVideoCard(video, trendingRow);
+                    createVideoCard(video, popularRow);
+                    createVideoCard(video, continueRow);
+                    createVideoCard(video, topRatedRow);
+                });
+            } catch (e) {
+                console.error('Failed to load videos', e);
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', async function() {
+            const user = await ensureAuthenticated();
+            if (!user) return;
+
+            const profileAvatar = document.querySelector('.profile-avatar');
+            if (profileAvatar && user.name) {
+                profileAvatar.textContent = user.name.charAt(0).toUpperCase();
+            }
+
+            await loadVideos();
         });
 
         // Logout functionality
         document.querySelector('.profile-menu').addEventListener('click', function() {
             if (confirm('Do you want to sign out?')) {
-                userDB.logout();
+                localStorage.removeItem('myflix_token');
+                localStorage.removeItem('myflix_user');
                 window.location.href = 'pages/netflix.html';
             }
         });
@@ -856,7 +906,7 @@
             });
         });
 
-        // Close modals
+        // Close modals on background / ESC
         document.getElementById('detailsModal').addEventListener('click', function(e) {
             if (e.target === this) {
                 closeDetails();

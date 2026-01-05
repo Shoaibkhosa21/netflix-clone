@@ -244,34 +244,41 @@
         </div>
     </div>
 
-    <script src="../js/database.js"></script>
     <script>
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
+        const API_BASE = 'http://localhost:5000/api';
+
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
             const errorMsg = document.getElementById('errorMessage');
             
-            // Hide previous error message
             errorMsg.classList.remove('show');
-            
-            // Verify login credentials
-            const result = userDB.verifyLogin(email, password);
-            
-            if (result.success) {
-                // Save current user session
-                userDB.setCurrentUser(result.user);
-                
-                // Redirect to homepage after successful login
+
+            try {
+                const res = await fetch(`${API_BASE}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await res.json();
+
+                if (!res.ok) {
+                    throw new Error(data.message || 'Login failed');
+                }
+
+                // Save token and user info
+                localStorage.setItem('myflix_token', data.token);
+                localStorage.setItem('myflix_user', JSON.stringify(data.user));
+
                 window.location.href = '../home.html';
-            } else {
-                // Show error message
-                errorMsg.textContent = result.message;
+            } catch (err) {
+                errorMsg.textContent = err.message;
                 errorMsg.classList.add('show');
             }
         });
     </script>
 </body>
 </html>
-

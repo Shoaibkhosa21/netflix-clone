@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyFlix Demo - Upload Video</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background: #0A2647;
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .container {
+            width: 100%;
+            max-width: 600px;
+            background: #144272;
+            padding: 30px;
+            border-radius: 6px;
+        }
+        h1 {
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+        }
+        .form-group { margin-bottom: 16px; }
+        label { display: block; margin-bottom: 6px; font-size: 0.95rem; }
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 4px;
+            border: none;
+            background: #0A2647;
+            color: #fff;
+        }
+        input[type="file"] {
+            color: #fff;
+        }
+        textarea { min-height: 80px; resize: vertical; }
+        .hint { font-size: 0.8rem; color: #d0e4ff; margin-top: 4px; }
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            background: #2C74B3;
+            color: #fff;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 8px;
+        }
+        .btn:hover { background: #205295; }
+        .message {
+            margin-top: 12px;
+            font-size: 0.9rem;
+        }
+        .message.error { color: #ffb199; }
+        .message.success { color: #9cffc2; }
+        .top-link { margin-bottom: 16px; font-size: 0.9rem; }
+        .top-link a { color: #d0e4ff; text-decoration: none; }
+        .top-link a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="top-link"><a href="home.html">← Back to Home</a></div>
+        <h1>Upload a Video</h1>
+        <p style="margin-bottom: 16px; font-size: 0.9rem;">Choose a video file or paste a YouTube URL. At least one is required.</p>
+
+        <div id="message" class="message"></div>
+
+        <form id="uploadForm">
+            <div class="form-group">
+                <label for="title">Title *</label>
+                <input type="text" id="title" name="title" required>
+            </div>
+
+            <div class="form-group">
+                <label for="description">Description</label>
+                <textarea id="description" name="description" placeholder="Optional description..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="video">Video file (MP4, max ~200MB)</label>
+                <input type="file" id="video" name="video" accept="video/*">
+            </div>
+
+            <div class="form-group">
+                <label for="externalUrl">YouTube URL (optional)</label>
+                <input type="text" id="externalUrl" name="externalUrl" placeholder="https://www.youtube.com/watch?v=...">
+                <div class="hint">If you provide both a file and a URL, the file will be used.</div>
+            </div>
+
+            <button type="submit" class="btn">Upload</button>
+        </form>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:5000/api';
+
+        function getAuthToken() {
+            return localStorage.getItem('myflix_token');
+        }
+
+        async function ensureAuthenticated() {
+            const token = getAuthToken();
+            if (!token) {
+                window.location.href = 'pages/netflix.html';
+                return null;
+            }
+
+            try {
+                const res = await fetch(`${API_BASE}/auth/me`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                if (!res.ok) throw new Error('Not authenticated');
+                return (await res.json()).user;
+            } catch (e) {
+                localStorage.removeItem('myflix_token');
+                localStorage.removeItem('myflix_user');
+                window.location.href = 'pages/netflix.html';
+                return null;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', async function () {
+            const user = await ensureAuthenticated();
+            if (!user) return;
+
+            const form = document.getElementById('uploadForm');
+            const messageEl = document.getElementById('message');
+
+            form.addEventListener('submit', async function (e) {
+                e.preventDefault();
+                messageEl.textContent = '';
+                messageEl.className = 'message';
+
+                const title = document.getElementById('title').value.trim();
+                const description = document.getElementById('description').value.trim();
+                const externalUrl = document.getElementById('externalUrl').value.trim();
+                const fileInput = document.getElementById('video');
+                const file = fileInput.files[0];
+
+                if (!title) {
+                    messageEl.textContent = 'Title is required.';
+                    messageEl.classList.add('error');
+                    return;
+                }
+
+                if (!file && !externalUrl) {
+                    messageEl.textContent = 'Please choose a video file or provide a YouTube URL.';
+                    messageEl.classList.add('error');
+                    return;
+                }
+
+                const token = getAuthToken();
+                if (!token) {
+                    window.location.href = 'pages/netflix.html';
+                    return;
+                }
+
+                const formData = new FormData();
+                formData.append('title', title);
+                formData.append('description', description);
+                if (file) formData.append('video', file);
+                if (!file && externalUrl) formData.append('externalUrl', externalUrl);
+
+                try {
+                    const res = await fetch(`${API_BASE}/videos`, {
+                        method: 'POST',
+                        headers: { Authorization: `Bearer ${token}` },
+                        body: formData
+                    });
+
+                    const data = await res.json();
+                    if (!res.ok) {
+                        throw new Error(data.message || 'Upload failed');
+                    }
+
+                    messageEl.textContent = 'Upload successful! Redirecting to home...';
+                    messageEl.classList.add('success');
+
+                    setTimeout(() => {
+                        window.location.href = 'home.html';
+                    }, 1500);
+                } catch (err) {
+                    messageEl.textContent = err.message;
+                    messageEl.classList.add('error');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

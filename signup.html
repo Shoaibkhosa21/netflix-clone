@@ -238,9 +238,10 @@
         </div>
     </div>
 
-    <script src="js/database.js"></script>
     <script>
-        document.getElementById('signupForm').addEventListener('submit', function(e) {
+        const API_BASE = 'http://localhost:5000/api';
+
+        document.getElementById('signupForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
             const name = document.getElementById('name').value.trim();
@@ -253,20 +254,28 @@
             // Hide previous messages
             errorMsg.classList.remove('show');
             successMsg.classList.remove('show');
-            
-            // Register user
-            const result = userDB.registerUser(email, password, name);
-            
-            if (result.success) {
-                successMsg.textContent = result.message + ' Redirecting to login...';
+
+            try {
+                const res = await fetch(`${API_BASE}/auth/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email, password })
+                });
+
+                const data = await res.json();
+
+                if (!res.ok) {
+                    throw new Error(data.message || 'Registration failed');
+                }
+
+                successMsg.textContent = (data.message || 'Registration successful') + ' Redirecting to login...';
                 successMsg.classList.add('show');
-                
-                // Redirect to login page after 2 seconds
+
                 setTimeout(() => {
                     window.location.href = 'pages/netflix.html';
-                }, 2000);
-            } else {
-                errorMsg.textContent = result.message;
+                }, 1500);
+            } catch (err) {
+                errorMsg.textContent = err.message;
                 errorMsg.classList.add('show');
             }
         });
